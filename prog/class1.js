@@ -1,3 +1,13 @@
+var clickCount = 0;
+function clickHandler(evt){
+   clickCount++;
+   console.log(evt);
+   var str = 
+   this.innerText = str;
+}
+
+var p = document.getElementById("pElement");
+p.addEventListener("click", clickHandler);
 
 class LivingCreature {
     constructor(x, y, index){
@@ -36,17 +46,7 @@ class LivingCreature {
 
 class Grass extends LivingCreature {
 
-    mul() {
-        this.multiply++;
-        var newCell = random(this.yntrelVandak(0));
-        if(this.multiply >= 8 && newCell) {
-            var newGrass = new Grass(newCell[0],newCell[1], this.index);
-            grassArr.push(newGrass);
-            matrix[newCell[1]][newCell[0]] = this.index;
-            this.multiply = 0;
-        }
-    }
-
+ 
 
     mul() {
         this.multiply++;
@@ -293,28 +293,29 @@ class Predator extends LivingCreature {
     }
 }
 
-class Mushroom extends LivingCreature {
-    constructor(x, y, index){
-        super(x, y, index);
-        this.energy = 8;
-    }
-   getNewCoordinates() {
-       this.directions = [
-           [this.x - 1, this.y - 1],
-           [this.x, this.y - 1],
-           [this.x + 1, this.y - 1],
-           [this.x - 1, this.y],
-           [this.x + 1, this.y],
-           [this.x - 1, this.y + 1],
-           [this.x, this.y + 1],
-           [this.x + 1, this.y + 1]
-       ];
-   }
-   chooseCell(character) {
-       this.getNewCoordinates();
-       return super.chooseCell(character);
-   }
+class Mushroom {
+    onstructor(x, y) {
+        this.x = x
+        this.y = y
+        this.multiply = 0
+        this.directions = [];
+        this.energy=10
 
+    }
+
+    chooseCell(character) {
+        var found = [];
+        for (var i in this.directions) {
+            var x = this.directions[i][0];
+            var y = this.directions[i][1];
+            if (x >= 0 && x < matrix[0].length && y >= 0 && y < matrix.length) {
+                if (matrix[y][x] == character) {
+                    found.push(this.directions[i]);
+                }
+            }
+        }
+        return found;
+    }
 
     mul() {
         this.multiply++;
@@ -338,6 +339,7 @@ class Mushroom extends LivingCreature {
 
 
 }
+
 
 class CreatPredator extends LivingCreature {
     constructor(x, y, index){
