@@ -1,59 +1,69 @@
-var clickCount = 0;
-function clickHandler(evt){
-   clickCount++;
-   console.log(evt);
-   var str = 
-   this.innerText = str;
-}
-
-var p = document.getElementById("pElement");
-p.addEventListener("click", clickHandler);
 
 class LivingCreature {
-    constructor(x, y, index){
+    constructor(x, y, index) {
         this.x = x;
         this.y = y;
         this.multiply = 0;
         this.index = index;
         this.directions = [
-           [this.x - 1, this.y - 1],
-           [this.x, this.y - 1],
-           [this.x + 1, this.y - 1],
-           [this.x - 1, this.y],
-           [this.x + 1, this.y],
-           [this.x - 1, this.y + 1],
-           [this.x, this.y + 1],
-           [this.x + 1, this.y + 1]
-       ];
- 
+            [this.x - 1, this.y - 1],
+            [this.x, this.y - 1],
+            [this.x + 1, this.y - 1],
+            [this.x - 1, this.y],
+            [this.x + 1, this.y],
+            [this.x - 1, this.y + 1],
+            [this.x, this.y + 1],
+            [this.x + 1, this.y + 1]
+        ];
+
     }
     chooseCell(ch) {
         var found = [];
         for (var i in this.directions) {
             var x = this.directions[i][0];
             var y = this.directions[i][1];
-            if (x >= 0 && x < matrix[0].length && y >= 0 && y < matrix.length){
+            if (x >= 0 && x < matrix[0].length && y >= 0 && y < matrix.length) {
                 if (matrix[y][x] == ch) {
                     found.push(this.directions[i]);
                 }
-            }   
+            }
         }
         return found;
     }
+
+
 }
- 
+class Bomb extends LivingCreature {
 
 
-class Grass extends LivingCreature {
-
- 
 
     mul() {
         this.multiply++;
         var emptyCells = this.chooseCell(0);
         var newCell = random(emptyCells);
 
-        if (newCell && this.multiply >= 5) {
+        if (newCell && this.multiply >= 100) {
+            var newX = newCell[0];
+            var newY = newCell[1];
+            matrix[newY][newX] = 6;
+
+            var newBomb = new Bomb(newX, newY);
+            bombArr.push(newBomb);
+            this.multiply = 0;
+        }
+    }
+
+}
+class Grass  extends LivingCreature {
+
+
+
+    mul() {
+        this.multiply++;
+        var emptyCells = this.chooseCell(0);
+        var newCell = random(emptyCells);
+
+        if (newCell && this.multiply >= 2) {
             var newX = newCell[0];
             var newY = newCell[1];
             matrix[newY][newX] = 1;
@@ -68,26 +78,26 @@ class Grass extends LivingCreature {
 
 
 class GrassEater extends LivingCreature {
-    constructor(x, y, index){
+    constructor(x, y, index) {
         super(x, y, index);
         this.energy = 8;
     }
-   getNewCoordinates() {
-       this.directions = [
-           [this.x - 1, this.y - 1],
-           [this.x, this.y - 1],
-           [this.x + 1, this.y - 1],
-           [this.x - 1, this.y],
-           [this.x + 1, this.y],
-           [this.x - 1, this.y + 1],
-           [this.x, this.y + 1],
-           [this.x + 1, this.y + 1]
-       ];
-   }
-   chooseCell(character) {
-       this.getNewCoordinates();
-       return super.chooseCell(character);
-   }
+    getNewCoordinates() {
+        this.directions = [
+            [this.x - 1, this.y - 1],
+            [this.x, this.y - 1],
+            [this.x + 1, this.y - 1],
+            [this.x - 1, this.y],
+            [this.x + 1, this.y],
+            [this.x - 1, this.y + 1],
+            [this.x, this.y + 1],
+            [this.x + 1, this.y + 1]
+        ];
+    }
+    chooseCell(character) {
+        this.getNewCoordinates();
+        return super.chooseCell(character);
+    }
 
 
     mul() {
@@ -158,7 +168,9 @@ class GrassEater extends LivingCreature {
                     grassArr.splice(i, 1);
                     break;
                 }
+
             }
+
 
         } else {
             this.move()
@@ -180,26 +192,26 @@ class GrassEater extends LivingCreature {
 
 
 class Predator extends LivingCreature {
-    constructor(x, y, index){
+    constructor(x, y, index) {
         super(x, y, index);
         this.energy = 8;
     }
-   getNewCoordinates() {
-       this.directions = [
-           [this.x - 1, this.y - 1],
-           [this.x, this.y - 1],
-           [this.x + 1, this.y - 1],
-           [this.x - 1, this.y],
-           [this.x + 1, this.y],
-           [this.x - 1, this.y + 1],
-           [this.x, this.y + 1],
-           [this.x + 1, this.y + 1]
-       ];
-   }
-   chooseCell(character) {
-       this.getNewCoordinates();
-       return super.chooseCell(character);
-   }
+    getNewCoordinates() {
+        this.directions = [
+            [this.x - 1, this.y - 1],
+            [this.x, this.y - 1],
+            [this.x + 1, this.y - 1],
+            [this.x - 1, this.y],
+            [this.x + 1, this.y],
+            [this.x - 1, this.y + 1],
+            [this.x, this.y + 1],
+            [this.x + 1, this.y + 1]
+        ];
+    }
+    chooseCell(character) {
+        this.getNewCoordinates();
+        return super.chooseCell(character);
+    }
 
     mul() {
         this.multiply++;
@@ -293,13 +305,17 @@ class Predator extends LivingCreature {
     }
 }
 
-class Mushroom {
-    onstructor(x, y) {
+
+
+
+
+class Mushroom  {
+    constructor(x, y) {
         this.x = x
         this.y = y
         this.multiply = 0
         this.directions = [];
-        this.energy=10
+        this.energy = 10
 
     }
 
@@ -342,33 +358,33 @@ class Mushroom {
 
 
 class CreatPredator extends LivingCreature {
-    constructor(x, y, index){
+    constructor(x, y, index) {
         super(x, y, index);
         this.energy = 8;
     }
-   getNewCoordinates() {
-       this.directions = [
-           [this.x - 1, this.y - 1],
-           [this.x, this.y - 1],
-           [this.x + 1, this.y - 1],
-           [this.x - 1, this.y],
-           [this.x + 1, this.y],
-           [this.x - 1, this.y + 1],
-           [this.x, this.y + 1],
-           [this.x + 1, this.y + 1]
-       ];
-   }
-   chooseCell(character) {
-       this.getNewCoordinates();
-       return super.chooseCell(character);
-   }
+    getNewCoordinates() {
+        this.directions = [
+            [this.x - 1, this.y - 1],
+            [this.x, this.y - 1],
+            [this.x + 1, this.y - 1],
+            [this.x - 1, this.y],
+            [this.x + 1, this.y],
+            [this.x - 1, this.y + 1],
+            [this.x, this.y + 1],
+            [this.x + 1, this.y + 1]
+        ];
+    }
+    chooseCell(character) {
+        this.getNewCoordinates();
+        return super.chooseCell(character);
+    }
 
     mul() {
         this.multiply++;
         var emptyCells = this.chooseCell(0);
         var newCell = random(emptyCells);
 
-        if (newCell ) {
+        if (newCell) {
             var newX = newCell[0];
             var newY = newCell[1];
             matrix[newY][newX] = 3;
@@ -383,13 +399,30 @@ class CreatPredator extends LivingCreature {
         var emptyCells = this.chooseCell(0);
         var newCell = random(emptyCells);
 
-        if (newCell ) {
+        if (newCell) {
             var newX = newCell[0];
             var newY = newCell[1];
             matrix[newY][newX] = 1;
 
-            var grass= new Grass(newX, newY);
+            var grass = new Grass(newX, newY);
             grassArr.push(grass)
+            this.multiply = 0;
+        }
+    }
+}
+class VirusGrass extends LivingCreature {
+    mul() {
+        this.multiply++;
+        var emptyCells = this.chooseCell(0);
+        var newCell = random(emptyCells);
+
+        if (newCell && this.multiply >= 2) {
+            var newX = newCell[0];
+            var newY = newCell[1];
+            matrix[newY][newX] = 7;
+
+            var newGrass = new Grass(newX, newY);
+            grassArr.push(newGrass);
             this.multiply = 0;
         }
     }

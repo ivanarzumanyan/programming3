@@ -1,4 +1,4 @@
-function generator(matLen, gr, grEat, pr, mush, crPr) {
+function generator(matLen, gr, grEat, pr, mush, crPr, bomb , eak) {
     let matrix = [];
     for (let i = 0; i < matLen; i++) {
         matrix[i] = [];
@@ -41,18 +41,27 @@ function generator(matLen, gr, grEat, pr, mush, crPr) {
             matrix[x][y] = 5;
         }
     }
+    for (let i = 0; i < bomb; i++) {
+        let x = Math.floor(Math.random() * matLen);
+        let y = Math.floor(Math.random() * matLen);
+        if (matrix[x][y] == 0) {
+            matrix[x][y] = 6;
+        }
+    }
+  
     return matrix;
 }
 
-let side = 10;
+let side = 4;
 
-let matrix = generator(30, 45, 15, 20, 10, 15);
+let matrix = generator(120, 150, 90, 50, 20, 25, 4,);
 let creatpredatorArr = []
 let mushroomArr = []
 let grassArr = []
 let grassEaterArr = []
 let grassPredatorArr = []
-
+let bombArr = []
+let virusgrass= []
 function setup() {
     createCanvas(matrix[0].length * side, matrix.length * side);
     background('#acacac');
@@ -80,7 +89,13 @@ function setup() {
                 creatpredatorArr.push(cr)
 
             }
-        }
+            else if (matrix[y][x] == 6) {
+                let bomb = new Bomb(x, y)
+                bombArr.push(bomb)
+            } 
+              
+        
+    }
     }
 }
 
@@ -89,8 +104,10 @@ function draw() {
         for (let x = 0; x < matrix[y].length; x++) {
             if (matrix[y][x] == 1) {
                 fill('green')
-            } else if (matrix[y][x] == 0) {
-                fill('#acacac')
+
+            }
+         else if (matrix[y][x] == 0) {
+                fill('#929292')
             } else if (matrix[y][x] == 2) {
                 fill('yellow')
             } else if (matrix[y][x] == 3) {
@@ -101,10 +118,16 @@ function draw() {
             }
             else if (matrix[y][x] == 5) {
                 fill('#E3DBDB')
+            } else if (matrix[y][x] == 6) {
+                fill('black')
             }
+        
+               
+
             rect(x * side, y * side, side, side)
         }
     }
+
 
     for (let i in grassArr) {
         grassArr[i].mul()
@@ -112,6 +135,7 @@ function draw() {
     for (let i in grassEaterArr) {
         grassEaterArr[i].mul()
         grassEaterArr[i].eat()
+
     }
     for (let i in grassPredatorArr) {
         grassPredatorArr[i].mul()
@@ -127,5 +151,13 @@ function draw() {
         if (grassArr.length < 10) {
             creatpredatorArr[i].mulGrass()
         }
+        for (let i in bombArr) {
+            bombArr[i].mul()
+            if (bombArr.length > 500)
+                break
+
+        }
+
     }
+
 }
